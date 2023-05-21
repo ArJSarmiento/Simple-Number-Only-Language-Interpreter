@@ -42,5 +42,6 @@ g++ *.cpp -o snol
 
 ### Run on Windows
 ```shell
-TBD
+gcc *.c -o snol
+snol.exe
 ```
