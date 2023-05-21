@@ -1,0 +1,33 @@
+# receives input, prints output, analyzes command and invokes the corresponding use_case
+Main
+
+# validates syntax and invokes relevant utils, calculator and data_store functions
+# accessed only by the main program
+Usecase
+-   beg
+-   print
+-   evaluate
+
+# stores and retrieves variables
+# accessed only by usecase methods
+Storage
+-   var_exists
+-   store_var
+-   get_var
+
+# evaluate to postfix and performs mathematical operations
+# accessed only by usecase methods
+Calculation
+-   evaluate_postfix
+-   calculate
+-   precedence
+
+# performs utility operations
+# accessed globally
+Utils
+-   analyze_command
+-   check_syntax
+-   remove_space
+-   is_operator
+-   is_variable
+-   is_digit

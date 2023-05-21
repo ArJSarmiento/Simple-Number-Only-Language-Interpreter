@@ -32,3 +32,15 @@ git merge dev-branch  # merge changes from dev-branch
 git push # push changes to the cloud 
 git checkout dev-branch # return to dev-branch
 ```
+
+### Run on Linux
+```shell
+g++ *.cpp -o snol
+./snol
+```
+
+
+### Run on Windows
+```shell
+TBD
+```
