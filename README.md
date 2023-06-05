@@ -50,5 +50,5 @@ or
 
 ```shell
 g++ *.cpp -o snol
-snol.exe
+./snol
 ```
