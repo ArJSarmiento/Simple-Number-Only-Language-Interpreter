@@ -6,6 +6,8 @@
 #include <cstring>
 #include "Utils.h"
 #include "Calculation.h"
+#include <sstream> // Required for converting string to float
+#include <cmath>   // Required for handling float comparison
 
 using namespace std;
 
@@ -24,8 +26,6 @@ string Calculation::calculate(string infix)
     Input: postfix expression
     Output: result of the expression
 */
-#include <sstream> // Required for converting string to float
-#include <cmath>   // Required for handling float comparison
 
 // ...
 
