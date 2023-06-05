@@ -45,3 +45,10 @@ g++ *.cpp -o snol
 gcc *.c -o snol
 snol.exe
 ```
+
+or 
+
+```shell
+g++ *.cpp -o snol
+snol.exe
+```
