@@ -12,7 +12,8 @@ class Calculation
 {
 
 public:
-    string calculate(string infix);
+    vector<string> calculate(string infix);
     int evaluate_postfix(string postfix);
     int precedence(string c);
+    bool isValidVariableName(const string& name); // Added for infix to postfix input validation
 };
