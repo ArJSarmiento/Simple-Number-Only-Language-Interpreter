@@ -42,13 +42,6 @@ g++ *.cpp -o snol
 
 ### Run on Windows
 ```shell
-gcc *.c -o snol
-snol.exe
-```
-
-or 
-
-```shell
 g++ *.cpp -o snol
 ./snol
 ```
