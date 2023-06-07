@@ -12,7 +12,7 @@ class Calculation
 {
 
 public:
-    vector<string> calculate(string infix);
+    vector<string> convert_infix_to_postfix(string infix);
     int evaluate_postfix(string postfix);
     int precedence(string c);
 };

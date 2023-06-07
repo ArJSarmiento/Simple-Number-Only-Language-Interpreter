@@ -17,5 +17,6 @@ bool check_syntax(string command, int type);
 string remove_space(string str);
 
 bool is_operator(char c);
+bool is_alpha_numeric(char c);
 bool is_variable(string c);
 bool is_digit(string c);

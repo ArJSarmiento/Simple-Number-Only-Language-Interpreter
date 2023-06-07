@@ -26,7 +26,6 @@ bool is_operator(char c)
 	case '-':
 	case '*':
 	case '/':
-	case '%':
 		return true;
 	}
 	return false;
@@ -36,6 +35,14 @@ bool is_variable(string c)
 {												 // Check if the string is in variable name syntax
 	regex var("\\(*-?[A-Za-z][A-Za-z0-9]*\\)*"); // letter{letter|digit} -> in IBNF
 	if (regex_match(c, var))
+		return true;
+	else
+		return false;
+}
+
+bool is_alpha_numeric(char c)
+{ // Check if the character is alphanumeric
+	if (isalpha(c) || isdigit(c))
 		return true;
 	else
 		return false;

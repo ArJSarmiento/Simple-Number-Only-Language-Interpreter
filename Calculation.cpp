@@ -11,78 +11,172 @@
 
 using namespace std;
 
-
 /*
     This function converts an infix expression to its equivalent postfix expression and evaluates the postfix if valid
     Input: infix expression
     Output: postfix expression
 */
-vector<string> Calculation::calculate(string infix)
+vector<string> Calculation::convert_infix_to_postfix(string infix)
 {
-    stack<char> operators;  // Stack to store operators
-    vector<string> tokens;  // Vector to store tokens (operands and operators)
-    string currentNumber;   // Temporary string to store the current number being parsed
-    bool parsingNumber = false;  // Flag to indicate if currently parsing a number
+    int infixStringLength = infix.length();
+    stack<char> operators;        // Stack to store operator
+    vector<string> tokens;        // Vector to store tokens (operands and operators)
+    string currentNumber;         // Temporary string to store the current number being parsed
+    string currentVariable;       // Temporary string to store the current variable being parsed
+    bool parsingNumber = false;   // Flag to indicate if currently parsing a number
+    bool parsingVariable = false; // Flag to indicate if currently parsing a variable
+    bool isFloat = false;         // Flag to indicate if
+    bool hasDot = false;          // Flag to indicate if dot is present
+
+    if (infix.empty())
+    {
+        return {"Invalid expression. Expression is empty."};
+    }
+    if (is_operator(infix[0]))
+    {
+        return {"Invalid expression. Expression cannot start with an operator."};
+    }
 
     // Iterate through each character in the infix expression
-    for (char& ch : infix) {
-        if (isspace(ch)) {
-            continue;  // Skip whitespace characters
+    for (int i = 0; i < infixStringLength; i++)
+    {
+        if (infix[i] == '.')
+        {
+            if (parsingVariable)
+            {
+                return {"Invalid expression. Dot should not be in a variable."};
+            }
+            if (!parsingNumber)
+            {
+                return {"Invalid expression. Variables should not start with a dot."};
+            }
+            if (hasDot)
+            {
+                return {"Invalid expression. Number has more than one dot."};
+            }
+
+            currentNumber += infix[i];
+            hasDot = true;
         }
-        else if (isdigit(ch)) {
+        else if (isdigit(infix[i]) && !parsingVariable)
+        {
             // If the character is a digit, append it to the currentNumber string
-            currentNumber += ch;
+            currentNumber += infix[i];
             parsingNumber = true;
         }
-        else {
-            if (parsingNumber) {
+        else if (is_alpha_numeric(infix[i]))
+        {
+            if ((isalpha(infix[i]) && parsingNumber) || hasDot)
+            {
+                return {"Invalid expression. Variables should not start with a number."};
+            }
+
+            // If the character is a variable, append it to the currentVariable string
+            currentVariable += infix[i];
+            parsingVariable = true;
+        }
+        else
+        {
+            if (parsingVariable)
+            {
+                // If parsing a variable, add the currentVariable as a token
+                tokens.push_back(currentVariable);
+                currentVariable.clear();
+                parsingVariable = false;
+            }
+            if (parsingNumber)
+            {
+                if (currentNumber.back() == '.')
+                {
+                    return {"Invalid expression. Number has a dot at the end."};
+                }
+                if (hasDot != isFloat)
+                {
+                    return {"Invalid expression. Type mismatch."};
+                }
+
                 // If parsing a number, add the currentNumber as a token
                 tokens.push_back(currentNumber);
                 currentNumber.clear();
                 parsingNumber = false;
+
+                if (hasDot && !isFloat)
+                {
+                    isFloat = true;
+                }
+                hasDot = false;
             }
 
-            if (ch == '+' || ch == '-' || ch == '*' || ch == '/') {
+            if (is_operator(infix[i]))
+            {
+                if (is_operator(infix[i + 1]) || infix[i + 1] == '\0')
+                {
+                    return {"Invalid expression"};
+                }
+
                 // If the character is an operator (+, -, *, /)
-                while (!operators.empty() && operators.top() != '(' && operators.top() != ')') {
+                while (!operators.empty() && operators.top() != '(' && operators.top() != ')')
+                {
                     // Pop operators from the stack and add them as tokens until the top of the stack is '(' or ')'
                     tokens.push_back(string(1, operators.top()));
                     operators.pop();
                 }
-                operators.push(ch);  // Push the current operator onto the stack
+                operators.push(infix[i]); // Push the current operator onto the stack
             }
-            else if (ch == '(') {
-                operators.push(ch);  // Push '(' onto the stack
+            else if (infix[i] == '(')
+            {
+                if (is_operator(infix[i + 1]))
+                {
+                    return {"Invalid expression"};
+                }
+
+                operators.push(infix[i]); // Push '(' onto the stack
             }
-            else if (ch == ')') {
+            else if (infix[i] == ')')
+            {
+                if (!is_operator(infix[i + 1]) && infix[i + 1] != '\0')
+                {
+                    return {"Invalid expression"};
+                }
+
                 // If the character is ')', pop operators from the stack and add them as tokens until '(' is found
-                while (!operators.empty() && operators.top() != '(') {
+                while (!operators.empty() && operators.top() != '(')
+                {
                     tokens.push_back(string(1, operators.top()));
                     operators.pop();
                 }
-                if (!operators.empty() && operators.top() == '(') {
-                    operators.pop();  // Pop '(' from the stack
+
+                if (operators.empty())
+                {
+                    return {"Mismatched parentheses in infix expression"};
                 }
             }
-            else {
+            else
+            {
                 // Invalid character detected, return "Invalid expression"
                 return {"Invalid expression"};
             }
         }
     }
 
-    if (parsingNumber) {
+    if (parsingNumber)
+    {
         // If parsing a number at the end, add it as a token
         tokens.push_back(currentNumber);
     }
 
-    while (!operators.empty()) {
+    while (!operators.empty())
+    {
+        if (operators.top() == '(' || operators.top() == ')')
+        {
+            return {"Mismatched parentheses in infix expression"};
+        }
         // Pop remaining operators from the stack and add them as tokens
         tokens.push_back(string(1, operators.top()));
         operators.pop();
     }
 
-    return tokens;  // Return the vector of tokens (postfix expression)
+    return tokens; // Return the vector of tokens (postfix expression)
 }
 
 /*
