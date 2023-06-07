@@ -8,19 +8,8 @@
 #include "Calculation.h"
 #include <sstream> // Required for converting string to float
 #include <cmath>   // Required for handling float comparison
-#include <regex>   // Required for detecting regular expressions
 
 using namespace std;
-
-/*
-    This function checks if a given infix string is a valid variable name based on the specified regex pattern
-    Input: infix expression
-    Output: bool value
-*/
-bool Calculation::isValidVariableName(const string& name) {
-    static const regex variableRegex("[a-zA-Z_][a-zA-Z0-9_]*");
-    return regex_match(name, variableRegex);
-}
 
 
 /*
@@ -60,7 +49,6 @@ vector<string> Calculation::calculate(string infix)
                     tokens.push_back(string(1, operators.top()));
                     operators.pop();
                 }
-                tokens.push_back(string(1, ' '));  // Add a space token to separate operators
                 operators.push(ch);  // Push the current operator onto the stack
             }
             else if (ch == '(') {
