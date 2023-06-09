@@ -9,9 +9,8 @@ using namespace std;
 bool Storage::var_exists(string command)
 {
 	if (variables.find(command) == variables.end())
-		return 0; // Variable not assigned yet
-	else
-		return 1;
+		return false; // Variable not assigned yet
+	return true;
 }
 
 void Storage::store_var(string var_name, string expression)

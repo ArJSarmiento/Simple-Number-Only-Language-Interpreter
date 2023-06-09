@@ -25,16 +25,17 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
     string currentVariable;       // Temporary string to store the current variable being parsed
     bool parsingNumber = false;   // Flag to indicate if currently parsing a number
     bool parsingVariable = false; // Flag to indicate if currently parsing a variable
-    bool isFloat = false;         // Flag to indicate if
     bool hasDot = false;          // Flag to indicate if dot is present
 
     if (infix.empty())
     {
-        return {"Invalid expression. Expression is empty."};
+        cout << "Invalid expression. Expression is empty." << endl;
+        return {};
     }
     if (is_operator(infix[0]))
     {
-        return {"Invalid expression. Expression cannot start with an operator."};
+        cout << "Invalid expression. Expression cannot start with an operator." << endl;
+        return {};
     }
 
     // Iterate through each character in the infix expression
@@ -44,15 +45,18 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
         {
             if (parsingVariable)
             {
-                return {"Invalid expression. Dot should not be in a variable."};
+                cout << "Invalid expression. Dot should not be in a variable." << endl;
+                return {};
             }
             if (!parsingNumber)
             {
-                return {"Invalid expression. Variables should not start with a dot."};
+                cout << "Invalid expression. Variables should not start with a dot." << endl;
+                return {};
             }
             if (hasDot)
             {
-                return {"Invalid expression. Number has more than one dot."};
+                cout << "Invalid expression. Number has more than one dot." << endl;
+                return {};
             }
 
             currentNumber += infix[i];
@@ -68,7 +72,8 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
         {
             if ((isalpha(infix[i]) && parsingNumber) || hasDot)
             {
-                return {"Invalid expression. Variables should not start with a number."};
+                cout << "Invalid expression. Variables should not start with a number." << endl;   
+                return {};
             }
 
             // If the character is a variable, append it to the currentVariable string
@@ -88,11 +93,13 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
             {
                 if (currentNumber.back() == '.')
                 {
-                    return {"Invalid expression. Number has a dot at the end."};
+                    cout << "Invalid expression. Number has a dot at the end." << endl;
+                    return {};
                 }
                 if (hasDot != isFloat)
                 {
-                    return {"Invalid expression. Type mismatch."};
+                    cout << "Invalid expression. Type mismatch." << endl;
+                    return {};
                 }
 
                 // If parsing a number, add the currentNumber as a token
@@ -111,7 +118,8 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
             {
                 if (is_operator(infix[i + 1]) || infix[i + 1] == '\0')
                 {
-                    return {"Invalid expression"};
+                    cout << "Invalid expression" << endl;
+                    return {};
                 }
 
                 // If the character is an operator (+, -, *, /)
@@ -127,7 +135,8 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
             {
                 if (is_operator(infix[i + 1]))
                 {
-                    return {"Invalid expression"};
+                    cout << "Invalid expression" << endl;
+                    return {};
                 }
 
                 operators.push(infix[i]); // Push '(' onto the stack
@@ -136,7 +145,8 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
             {
                 if (!is_operator(infix[i + 1]) && infix[i + 1] != '\0')
                 {
-                    return {"Invalid expression"};
+                    cout << "Invalid expression" << endl;
+                    return {};
                 }
 
                 // If the character is ')', pop operators from the stack and add them as tokens until '(' is found
@@ -148,13 +158,15 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
 
                 if (operators.empty())
                 {
-                    return {"Mismatched parentheses in infix expression"};
+                    cout << "Mismatched parentheses in infix expression" << endl;
+                    return {};
                 }
             }
             else
             {
                 // Invalid character detected, return "Invalid expression"
-                return {"Invalid expression"};
+                cout << "Invalid expression." << endl;
+                return {};
             }
         }
     }
@@ -169,7 +181,8 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
     {
         if (operators.top() == '(' || operators.top() == ')')
         {
-            return {"Mismatched parentheses in infix expression"};
+            cout << "Mismatched parentheses in infix expression" << endl;
+            return {};
         }
         // Pop remaining operators from the stack and add them as tokens
         tokens.push_back(string(1, operators.top()));
@@ -184,11 +197,6 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
     Input: postfix expression
     Output: result of the expression
 */
-
-// ...
-
-bool isFloatInput = false; // Flag to indicate if user input is float or int
-
 int Calculation::evaluate_postfix(string postfix)
 {
     stack<int> intOperands;
@@ -199,7 +207,7 @@ int Calculation::evaluate_postfix(string postfix)
         if (isdigit(c))
         {
             // Convert char digit to integer or float and push onto respective stacks
-            if (isFloatInput)
+            if (isFloat)
             {
                 float floatOperand;
                 stringstream ss;
@@ -216,7 +224,7 @@ int Calculation::evaluate_postfix(string postfix)
         else if (c == '+' || c == '-' || c == '*' || c == '/')
         {
             // Perform arithmetic operation when an operator is encountered
-            if (isFloatInput)
+            if (isFloat)
             {
                 float floatOperand2 = floatOperands.top();
                 floatOperands.pop();
@@ -271,7 +279,7 @@ int Calculation::evaluate_postfix(string postfix)
         }
     }
 
-    if (isFloatInput && !floatOperands.empty())
+    if (isFloat && !floatOperands.empty())
     {
         return floatOperands.top(); // Return the final float result
     }

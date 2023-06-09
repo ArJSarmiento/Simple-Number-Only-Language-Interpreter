@@ -38,7 +38,6 @@ int main()
 		case 0:
 			/*
 				analyze_command did not understand the command
-				ERROR CHECKING HERE PLEASE
 			*/
 			break;
 		case 1:
@@ -56,11 +55,6 @@ int main()
 			return 0;
 			break;
 		case 4:
-			/*
-			Already done syntax checking for this part, check if calculation will be possible
-			else display error message
-			if (check_syntax(command, type)) DO STUFF HERE;
-			*/
 			if (!check_syntax(command, type))
 				cout << "ERROR" << endl;
 			break;

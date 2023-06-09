@@ -2,6 +2,7 @@
 #include <string>
 #include "Storage.h"
 #include "Usecase.h"
+#include "Calculation.h"
 
 using namespace std;
 
@@ -42,4 +43,19 @@ void Usecase::PRINT(string command)
 
 void Usecase::ASSIGN(string command)
 {
+    string normalized_command = remove_space(command);
+    string var_name = normalized_command.substr(0, normalized_command.find("="));
+    if (!storage.var_exists(var_name))
+    {
+        cout << "SNOL> Error! [" << var_name << "] is not defined!" << endl;
+        return;
+    }
+
+    string expression = normalized_command.substr(normalized_command.find("=") + 1);
+    vector<string> postfix = calculation.convert_infix_to_postfix(expression);
+    if (postfix.size() == 0)
+    {
+        return;
+    }
+
 }
