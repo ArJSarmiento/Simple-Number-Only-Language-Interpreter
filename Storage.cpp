@@ -6,10 +6,17 @@
 
 using namespace std;
 
-bool Storage::var_exists(string command)
+bool Storage::var_exists(string var_name)
 {
-	if (variables.find(command) == variables.end())
-		return false; // Variable not assigned yet
+	try
+	{
+		variables.at(var_name);
+	}
+	catch (const std::exception &e)
+	{
+		return false;
+	}
+
 	return true;
 }
 

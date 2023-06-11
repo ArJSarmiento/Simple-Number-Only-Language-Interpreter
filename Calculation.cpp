@@ -4,11 +4,12 @@
 #include <cctype>
 #include <cstring>
 #include <cstdio>
-#include "Utils.h"
-#include "Calculation.h"
 #include <stack>
 #include <sstream> // Required for converting string to float
 #include <cmath>   // Required for handling float comparison
+#include "Utils.h"
+#include "Storage.h"
+#include "Calculation.h"
 
 using namespace std;
 
@@ -30,12 +31,12 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
 
     if (infix.empty())
     {
-        cout << "Invalid expression. Expression is empty." << endl;
+        cout << "SNOL> Error! Expression is empty." << endl;
         return {};
     }
     if (is_operator(infix[0]))
     {
-        cout << "Invalid expression. Expression cannot start with an operator." << endl;
+        cout << "SNOL> Error! Expression cannot start with an operator." << endl;
         return {};
     }
 
@@ -46,17 +47,17 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
         {
             if (parsingVariable)
             {
-                cout << "Invalid expression. Dot should not be in a variable." << endl;
+                cout << "SNOL> Error! Dot should not be in a variable." << endl;
                 return {};
             }
             if (!parsingNumber)
             {
-                cout << "Invalid expression. Variables should not start with a dot." << endl;
+                cout << "SNOL> Error! Variables should not start with a dot." << endl;
                 return {};
             }
             if (hasDot)
             {
-                cout << "Invalid expression. Number has more than one dot." << endl;
+                cout << "SNOL> Error! Number has more than one dot." << endl;
                 return {};
             }
 
@@ -73,7 +74,7 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
         {
             if ((isalpha(infix[i]) && parsingNumber) || hasDot)
             {
-                cout << "Invalid expression. Variables should not start with a number." << endl;   
+                cout << "SNOL> Error! Variables should not start with a number." << endl;
                 return {};
             }
 
@@ -94,12 +95,12 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
             {
                 if (currentNumber.back() == '.')
                 {
-                    cout << "Invalid expression. Number has a dot at the end." << endl;
+                    cout << "SNOL> Error! Number has a dot at the end." << endl;
                     return {};
                 }
                 if (hasDot != isFloat)
                 {
-                    cout << "Invalid expression. Type mismatch." << endl;
+                    cout << "SNOL> Error! Operands must be of the same type in an arithmetic operation!" << endl;
                     return {};
                 }
 
@@ -119,7 +120,7 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
             {
                 if (is_operator(infix[i + 1]) || infix[i + 1] == '\0')
                 {
-                    cout << "Invalid expression" << endl;
+                    cout << "SNOL> Error!" << endl;
                     return {};
                 }
 
@@ -136,7 +137,7 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
             {
                 if (is_operator(infix[i + 1]))
                 {
-                    cout << "Invalid expression" << endl;
+                    cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
                     return {};
                 }
 
@@ -146,7 +147,7 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
             {
                 if (!is_operator(infix[i + 1]) && infix[i + 1] != '\0')
                 {
-                    cout << "Invalid expression" << endl;
+                    cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
                     return {};
                 }
 
@@ -159,14 +160,14 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
 
                 if (operators.empty())
                 {
-                    cout << "Mismatched parentheses in infix expression" << endl;
+                    cout << "SNOL> Error! Mismatched parentheses in infix expression" << endl;
                     return {};
                 }
             }
             else
             {
-                // Invalid character detected, return "Invalid expression"
-                cout << "Invalid expression." << endl;
+                // Invalid character detected, return "Error!"
+                cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
                 return {};
             }
         }
@@ -182,7 +183,7 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
     {
         if (operators.top() == '(' || operators.top() == ')')
         {
-            cout << "Mismatched parentheses in infix expression" << endl;
+            cout << "SNOL> Error! Mismatched parentheses in infix expression" << endl;
             return {};
         }
         // Pop remaining operators from the stack and add them as tokens
@@ -198,221 +199,95 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
     Input: postfix expression
     Output: result of the expression
 */
-float Calculation::evaluate_postfix(vector<string> postfix)
+string Calculation::evaluate_postfix(vector<string> postfix)
 {
-    vector<int> intOperands; // Temporary vector to allow int calculations
-    vector<float> floatOperands; // Temporary vector to allow float calculations
-    vector<string> finalResult; // Final return vector for evaluation
-    
-    for (vector<string>::iterator c = postfix.begin(); c!=postfix.end(); ++c) {
-        char s = std::stoi(*c);
-        if (isdigit(s)) // Checks if digit
+    stack<float> operands; // Stack to store operands
+    Storage storage;
+
+    for (int i = 0; i < postfix.size(); i++)
+    {
+        string token = postfix[i];
+        if (is_digit(token))
         {
-            if (isFloat) // Checks if float
-            {
-                float floatOperand;
-                stringstream ss;
-                ss << s;
-                ss >> floatOperand;
-                floatOperands.push_back(floatOperand);
-            }
-            else // Else integer
-            {
-                int intOperand = s- '0';
-                intOperands.push_back(intOperand);
-            }
-        } 
-
-        else if (s== '+' || s== '-' || s== '*' || s== '/') // Checks if operator
+            float floatOperand = stof(token);
+            operands.push(floatOperand);
+        }
+        else if (is_variable(token))
         {
-            if (isFloat) // Checks if float
+            if (!storage.var_exists(token))
             {
-                float floatOperand2 = floatOperands.front();
-                floatOperands.erase(floatOperands.begin());
-                float floatOperand1 = floatOperands.front();
-                floatOperands.erase(floatOperands.begin());
-
-                float result;
-                switch (s)
-                {
-                case '+':
-                    result = floatOperand1 + floatOperand2;
-                    break;
-                case '-':
-                    result = floatOperand1 - floatOperand2;
-                    break;
-                case '*':
-                    result = floatOperand1 * floatOperand2;
-                    break;
-                case '/':
-                    result = floatOperand1 / floatOperand2;
-                    break;
-                }
-
-                floatOperands.push_back(result); // Push the result back to the stack
+                cerr << "SNOL> Error! [" << token << "] is not defined!" << endl;
+                return "";
             }
-            else
+            string var1 = storage.get_var(token);
+
+            float floatOperand = stof(var1);
+            operands.push(floatOperand);
+        }
+        else if (is_operator_string(token))
+        {
+            float floatOperand1 = operands.top();
+            operands.pop();
+            float floatOperand2 = operands.top();
+            operands.pop();
+
+            float result;
+            char iter = token[0];
+            switch (iter)
             {
-                int intOperand2 = intOperands.front();
-                intOperands.erase(intOperands.begin());
-                int intOperand1 = intOperands.front();
-                intOperands.erase(intOperands.begin());
-                int result;
-                switch (s)
-                {
-                case '+':
-                    result = intOperand1 + intOperand2;
-                    break;
-                case '-':
-                    result = intOperand1 - intOperand2;
-                    break;
-                case '*':
-                    result = intOperand1 * intOperand2;
-                    break;
-                case '/':
-                    result = intOperand1 / intOperand2;
-                    break;
-                }
-                intOperands.push_back(result); // Push the result back to the vector
+            case '+':
+                result = floatOperand1 + floatOperand2;
+                break;
+            case '-':
+                result = floatOperand2 - floatOperand1;
+                break;
+            case '*':
+                result = floatOperand1 * floatOperand2;
+                break;
+            case '/':
+                result = floatOperand2 / floatOperand1;
+                break;
             }
+
+            operands.push(result);
         }
     }
-    
-    if (!intOperands.empty())
-    {
-        if (isFloat) // Checks if float
-        {
-            return floatOperands.front(); // Return the final result as a string
-        }
-        else 
-        {
 
-            return intOperands.front(); // Return the final result as a string
+    if (operands.empty())
+    {
+        return "";
+    }
+
+    return removeTrailingZeroes(operands.top());
+}
+
+string Calculation::removeTrailingZeroes(float num)
+{
+    string str = to_string(num);
+    string whole_number = str.substr(0, str.find("."));
+    string decimals = str.substr(str.find(".") + 1);
+    string decimal_results = decimals;
+
+    // iterates backwards and check for trailing zero
+    for (int i = decimals.length() - 1; i >= 0; i--)
+    {
+        if (decimals[i] == '0')
+        {
+            decimal_results.pop_back();
         }
+        else
+        {
+            break;
+        }
+    }
+
+    // if the decimal results is empty, return the whole number
+    if (decimal_results.empty())
+    {
+        return whole_number;
     }
     else
     {
-        // Handle error when no result is available
-        // For example, when the postfix expression is invalid
-        throw runtime_error("Invalid postfix expression");
+        return whole_number + "." + decimal_results;
     }
 }
-
-int Calculation::precedence(string c) 
-{
-    switch (c[0])
-    {
-    case '*':
-    case '/':
-    case '%':
-        return 2;
-    case '+':
-    case '-':
-        return 1;
-    default:
-        return 0;
-    }
-}
-
-
-    // stack<int> intOperands;
-    // stack<float> floatOperands;
-
-    // for (char c : postfix)
-    // {
-    //     if (isdigit(c))
-    //     {
-    //         // Convert char digit to integer or float and push onto respective stacks
-    //         if (isFloat)
-    //         {
-    //             float floatOperand;
-    //             stringstream ss;
-    //             ss << c;
-    //             ss >> floatOperand;
-    //             floatOperands.push_back(floatOperand);
-    //             cout << floatOperand.begin();
-    //         }
-    //         else
-    //         {
-    //             int intOperand = c - '0';
-    //             intOperands.push_back(intOperand);
-    //         }
-    //     }
-    //     else if (c == '+' || c == '-' || c == '*' || c == '/')
-    //     {
-    //         // Perform arithmetic operation when an operator is encountered
-    //         if (isFloat)
-    //         {
-    //             float floatOperand2 = floatOperands.top();
-    //             floatOperands.pop();
-    //             float floatOperand1 = floatOperands.top();
-    //             floatOperands.pop();
-
-    //             float result;
-    //             switch (c)
-    //             {
-    //             case '+':
-    //                 result = floatOperand1 + floatOperand2;
-    //                 break;
-    //             case '-':
-    //                 result = floatOperand1 - floatOperand2;
-    //                 break;
-    //             case '*':
-    //                 result = floatOperand1 * floatOperand2;
-    //                 break;
-    //             case '/':
-    //                 result = floatOperand1 / floatOperand2;
-    //                 break;
-    //             }
-
-    //             floatOperands.push(result); // Push the result back to the stack
-    //         }
-    //         else
-    //         {
-    //             int intOperand2 = intOperands.top();
-    //             intOperands.pop();
-    //             int intOperand1 = intOperands.top();
-    //             intOperands.pop();
-
-    //             int result;
-    //             switch (c)
-    //             {
-    //             case '+':
-    //                 result = intOperand1 + intOperand2;
-    //                 break;
-    //             case '-':
-    //                 result = intOperand1 - intOperand2;
-    //                 break;
-    //             case '*':
-    //                 result = intOperand1 * intOperand2;
-    //                 break;
-    //             case '/':
-    //                 result = intOperand1 / intOperand2;
-    //                 break;
-    //             }
-
-    //             intOperands.push(result); // Push the result back to the stack
-    //         }
-    //     }
-    // }
-
-    // if (isFloat && !floatOperands.empty())
-    // {
-    //     return floatOperands.top(); // Return the final float result
-    // }
-    // else if (!intOperands.empty())
-    // {
-    //     return intOperands.top(); // Return the final int result
-    // }
-    // else
-    // {
-    //     // Handle error when no result is available
-    //     // For example, when the postfix expression is invalid
-    //     throw runtime_error("Invalid postfix expression");
-    // }
-
-/*
-    This function returns the precedence of an operator
-    Input: char
-    Output: int
-*/

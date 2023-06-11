@@ -2,16 +2,18 @@
 #include <string>
 #include "Utils.h"
 #include "Usecase.h"
+#include "Calculation.h"
 
 using namespace std;
 
 /*
-	Program Description: An interpreter for SNOL (Simple Number Only Language).
-	It consists of three parts: Main, Utilities, and Storage
+	Program Description: Simple Number-Only Language (SNOL).
+	SNOL is a simplified custom language that only involves integer and real values, operations, and expressions.
+	It consists of four modules: Main, Calculation, Utilities, and Storage
 	Main: Serves as the main part of the program where the I/O part is done
 	Calculation (Calculation.cpp) Functions that calculate the value of an expression
 	Utilities (Utils.cpp) : Consists of utility functions where important parts involving syntax and grammar checking is done
-	Storage (Storage.cpp) : Class file that deals with variable storage and manipulation
+	Storage (Storage.cpp) : Class file that handles with variable storage and manipulation
 
 	Commands:
 		0 = Command unrecognized or invalid syntax
@@ -39,6 +41,7 @@ int main()
 			/*
 				analyze_command did not understand the command
 			*/
+			cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
 			break;
 		case 1:
 			// BEG Command
@@ -56,7 +59,7 @@ int main()
 			break;
 		case 4:
 			if (!check_syntax(command, type))
-				cout << "ERROR" << endl;
+				cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
 			break;
 		case 5:
 			// Assignment

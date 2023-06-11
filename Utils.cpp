@@ -31,6 +31,21 @@ bool is_operator(char c)
 	return false;
 }
 
+bool is_operator_string(string c)
+{ // Check if current character is a mathematical operator
+	char s = c[0];
+	switch (s)
+	{
+		case '+':
+		case '-':
+		case '*':
+		case '/':
+			return true;
+	}
+	return false;
+}
+
+
 bool is_variable(string c)
 {												 // Check if the string is in variable name syntax
 	regex var("\\(*-?[A-Za-z][A-Za-z0-9]*\\)*"); // letter{letter|digit} -> in IBNF
