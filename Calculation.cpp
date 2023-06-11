@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cctype>
 #include <cstring>
+#include <cstdio>
 #include "Utils.h"
 #include "Calculation.h"
 #include <stack>
@@ -197,31 +198,32 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
     Input: postfix expression
     Output: result of the expression
 */
-vector<string> Calculation::evaluate_postfix(string postfix)
+float Calculation::evaluate_postfix(vector<string> postfix)
 {
     vector<int> intOperands; // Temporary vector to allow int calculations
     vector<float> floatOperands; // Temporary vector to allow float calculations
     vector<string> finalResult; // Final return vector for evaluation
     
-    for (char c : postfix) {
-        if (isdigit(c)) // Checks if digit
+    for (vector<string>::iterator c = postfix.begin(); c!=postfix.end(); ++c) {
+        char s = std::stoi(*c);
+        if (isdigit(s)) // Checks if digit
         {
             if (isFloat) // Checks if float
             {
                 float floatOperand;
                 stringstream ss;
-                ss << c;
+                ss << s;
                 ss >> floatOperand;
                 floatOperands.push_back(floatOperand);
-            } 
+            }
             else // Else integer
             {
-                int intOperand = c - '0';
+                int intOperand = s- '0';
                 intOperands.push_back(intOperand);
             }
         } 
 
-        else if (c == '+' || c == '-' || c == '*' || c == '/') // Checks if operator
+        else if (s== '+' || s== '-' || s== '*' || s== '/') // Checks if operator
         {
             if (isFloat) // Checks if float
             {
@@ -231,7 +233,7 @@ vector<string> Calculation::evaluate_postfix(string postfix)
                 floatOperands.erase(floatOperands.begin());
 
                 float result;
-                switch (c)
+                switch (s)
                 {
                 case '+':
                     result = floatOperand1 + floatOperand2;
@@ -256,7 +258,7 @@ vector<string> Calculation::evaluate_postfix(string postfix)
                 int intOperand1 = intOperands.front();
                 intOperands.erase(intOperands.begin());
                 int result;
-                switch (c)
+                switch (s)
                 {
                 case '+':
                     result = intOperand1 + intOperand2;
@@ -278,15 +280,15 @@ vector<string> Calculation::evaluate_postfix(string postfix)
     
     if (!intOperands.empty())
     {
-        
-        for (int i=0; i<intOperands.size(); i++) {
-                stringstream ss;
-                string placeholder;
-                ss << intOperands[i];
-                ss >> placeholder;
-                finalResult.push_back(placeholder); 
+        if (isFloat) // Checks if float
+        {
+            return floatOperands.front(); // Return the final result as a string
         }
-        return finalResult; // Return the final result as a string
+        else 
+        {
+
+            return intOperands.front(); // Return the final result as a string
+        }
     }
     else
     {

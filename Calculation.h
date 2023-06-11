@@ -14,6 +14,6 @@ class Calculation
     public:
         bool isFloat = false;
         vector<string> convert_infix_to_postfix(string infix);
-        vector<string> evaluate_postfix(string postfix);
+        float evaluate_postfix(vector<string> postfix);
         int precedence(string c);
 };
