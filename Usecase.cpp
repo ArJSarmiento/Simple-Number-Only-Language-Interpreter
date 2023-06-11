@@ -18,7 +18,7 @@ void Usecase::BEG(string command)
     if (is_digit(store))
         storage->store_var(var_name, store);
     else
-        cout << "ERROR" << endl;
+        cout << "SNOL> Error! Invalid value." << endl;
 }
 
 void Usecase::PRINT(string command)
@@ -44,10 +44,15 @@ void Usecase::PRINT(string command)
 void Usecase::ASSIGN(string command)
 {
     // remove spaces
-    string var_name = remove_space(command.substr(0, command.find("=")));
+    string var_name = strip_spaces(command.substr(0, command.find("=")));
+    if (!is_variable(var_name))
+    {
+        cout << "SNOL> Error! [" << var_name << "] is not a valid variable name!" << endl;
+        return;
+    }
 
     // get expression an convert to postfix
-    string expression = command.substr(command.find("=") + 1);
+    string expression = remove_space(command.substr(command.find("=") + 1));
     string result = CALCULATE(expression);
 
     storage->store_var(var_name, result);

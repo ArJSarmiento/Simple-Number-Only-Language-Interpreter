@@ -74,10 +74,6 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
     {
         char current_char = infix[i];
 
-        if (isspace(current_char))
-        {
-            continue;
-        }
         if (current_char == '.')
         {
             if (parsingVariable)
@@ -138,11 +134,6 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
                     cout << "SNOL> Error! Number has a dot at the end." << endl;
                     return {};
                 }
-                if (hasDot != isFloat)
-                {
-                    cout << "SNOL> Error! Operands must be of the same type in an arithmetic operation!" << endl;
-                    return {};
-                }
 
                 // If parsing a number, add the currentNumber as a token
                 tokens.push_back(currentNumber);
@@ -153,17 +144,16 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
                 {
                     isFloat = true;
                 }
+                if (hasDot != isFloat)
+                {
+                    cout << "SNOL> Error! Operands must be of the same type in an arithmetic operation!" << endl;
+                    return {};
+                }
                 hasDot = false;
             }
 
             if (is_operator(current_char))
             {
-                if (is_operator(infix[i + 1]) || infix[i + 1] == '\0')
-                {
-                    cout << "SNOL> Error!" << endl;
-                    return {};
-                }
-
                 // If the character is an operator (+, -, *, /)
                 while (!operators.empty() && operators.top() != '(' && precedence(operators.top()) >= precedence(current_char))
                 {
@@ -175,21 +165,10 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
             }
             else if (current_char == '(')
             {
-                if (is_operator(infix[i + 1]))
-                {
-                    cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
-                    return {};
-                }
-
                 operators.push(current_char); // Push '(' onto the stack
             }
             else if (current_char == ')')
             {
-                if (!is_operator(infix[i + 1]) && infix[i + 1] != '\0')
-                {
-                    cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
-                    return {};
-                }
 
                 // If the character is ')', pop operators from the stack and add them as tokens until '(' is found
                 while (!operators.empty() && operators.top() != '(')
@@ -243,7 +222,7 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
     if (parsingVariable)
     {
         // If parsing a variable at the end, add it as a token
-        if (currentVariable.find("BEG"  ) != string::npos || currentVariable.find("PRINT") != string::npos)
+        if (currentVariable.find("BEG") != string::npos || currentVariable.find("PRINT") != string::npos)
         {
             cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
             return {};
@@ -347,5 +326,6 @@ string Calculation::evaluate_postfix(vector<string> postfix)
         return "";
     }
 
+    isFloat = false;
     return remove_trailing_zeroes(operands.top());
 }
