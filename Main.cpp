@@ -62,9 +62,10 @@ int main()
 			return 0;
 			break;
 		case 4:
-			if (!check_syntax(command, type))
-				cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
-			use_case.CALCULATE(command);
+			if (check_syntax(command, type))
+			{
+				use_case.CALCULATE(command);
+			}
 			break;
 		case 5:
 			// Assignment

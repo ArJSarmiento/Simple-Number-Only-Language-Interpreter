@@ -96,8 +96,8 @@ bool check_syntax(string command, int type)
 			return true;
 		else
 		{
-			// DISPLAY APPROPRIATE ERROR COMMAND PLEASEEEE
-			cout << "ERROR" << endl;
+			// DISPLAY APPROPRIATE SNOL> Unknown command! Does not match any valid command of the language. COMMAND PLEASEEEE
+			cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
 			return false;
 		}
 	}
@@ -108,8 +108,8 @@ bool check_syntax(string command, int type)
 			return true;
 		else
 		{
-			// DISPLAY APPROPRIATE ERROR COMMAND PLEASEEEE
-			cout << "ERROR" << endl;
+			// DISPLAY APPROPRIATE SNOL> Unknown command! Does not match any valid command of the language. COMMAND PLEASEEEE
+			cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
 			return false;
 		}
 	}
@@ -119,8 +119,8 @@ bool check_syntax(string command, int type)
 		{
 			if (parenthesis < 0)
 			{
-				// DISPLAY APPROPRIATE ERROR COMMAND PLEASEEEE
-				cout << " Parenthesis ERROR" << endl;
+				// DISPLAY APPROPRIATE SNOL> Unknown command! Does not match any valid command of the language. COMMAND PLEASEEEE
+				cout << " Parenthesis SNOL> Unknown command! Does not match any valid command of the language." << endl;
 				return false;
 			}
 			else if (command[i] == '(')
@@ -137,14 +137,14 @@ bool check_syntax(string command, int type)
 			{ // Serves as flag to check the temp
 				if (temp.size() == 0)
 				{ // No valid characters for part
-					// DISPLAY APPROPRIATE ERROR COMMAND PLEASEEEE
-					cout << "ERROR" << endl;
+					// DISPLAY APPROPRIATE SNOL> Unknown command! Does not match any valid command of the language. COMMAND PLEASEEEE
+					cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
 					return false;
 				}
 				if (!(regex_match(temp, var) || regex_match(temp, digit)))
 				{ // Not in variable or digit syntax
-					// DISPLAY APPROPRIATE ERROR COMMAND PLEASEEEE
-					cout << "ERROR" << endl;
+					// DISPLAY APPROPRIATE SNOL> Unknown command! Does not match any valid command of the language. COMMAND PLEASEEEE
+					cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
 					return false;
 				}
 				temp.erase();
@@ -157,22 +157,22 @@ bool check_syntax(string command, int type)
 
 		if (parenthesis != 0)
 		{
-			// DISPLAY APPROPRIATE ERROR COMMAND PLEASEEEE
-			cout << "Parenthesis ERROR" << endl;
+			// DISPLAY APPROPRIATE SNOL> Unknown command! Does not match any valid command of the language. COMMAND PLEASEEEE
+			cout << "Parenthesis SNOL> Unknown command! Does not match any valid command of the language." << endl;
 			return false;
 		}
 
 		// Same as above, but for the last part before end of string
 		if (temp.size() == 0)
 		{ // No valid characters for part
-			// DISPLAY APPROPRIATE ERROR COMMAND PLEASEEEE
-			cout << "ERROR" << endl;
+			// DISPLAY APPROPRIATE SNOL> Unknown command! Does not match any valid command of the language. COMMAND PLEASEEEE
+			cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
 			return false;
 		}
 		if (!(regex_match(temp, var) || regex_match(temp, digit)))
 		{ // Not in variable or digit syntax
-			// DISPLAY APPROPRIATE ERROR COMMAND PLEASEEEE
-			cout << "ERROR" << endl;
+			// DISPLAY APPROPRIATE SNOL> Unknown command! Does not match any valid command of the language. COMMAND PLEASEEEE
+			cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
 			return false;
 		}
 		temp.erase();
@@ -184,8 +184,8 @@ bool check_syntax(string command, int type)
 		{
 			if (parenthesis < 0)
 			{
-				// DISPLAY APPROPRIATE ERROR COMMAND PLEASEEEE
-				cout << "ERROR" << endl;
+				// DISPLAY APPROPRIATE SNOL> Unknown command! Does not match any valid command of the language. COMMAND PLEASEEEE
+				cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
 				return false;
 			}
 			else if (command[i] == '(')
@@ -203,14 +203,14 @@ bool check_syntax(string command, int type)
 				equals++;
 				if (equals > 1)
 				{ // Error if more than 1 equals sign
-					// DISPLAY APPROPRIATE ERROR COMMAND PLEASEEEE
-					cout << "ERROR" << endl;
+					// DISPLAY APPROPRIATE SNOL> Unknown command! Does not match any valid command of the language. COMMAND PLEASEEEE
+					cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
 					return false;
 				}
 				if (!regex_match(temp, var))
 				{ // Error if not in variable name syntax
-					// DISPLAY APPROPRIATE ERROR COMMAND PLEASEEEE
-					cout << "ERROR" << endl;
+					// DISPLAY APPROPRIATE SNOL> Unknown command! Does not match any valid command of the language. COMMAND PLEASEEEE
+					cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
 					return false;
 				}
 				temp.erase();
@@ -219,14 +219,14 @@ bool check_syntax(string command, int type)
 			{ // Flag to check part of the expression for syntax
 				if (temp.size() == 0 || equals == 0)
 				{ // No part captured, meaning repeating operator error or no equals sign found
-					// DISPLAY APPROPRIATE ERROR COMMAND PLEASEEEE
-					cout << "ERROR" << endl;
+					// DISPLAY APPROPRIATE SNOL> Unknown command! Does not match any valid command of the language. COMMAND PLEASEEEE
+					cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
 					return false;
 				}
 				if (!(regex_match(temp, var) || regex_match(temp, digit)))
 				{ // Not in variable or digit syntax
-					// DISPLAY APPROPRIATE ERROR COMMAND PLEASEEEE
-					cout << "ERROR" << endl;
+					// DISPLAY APPROPRIATE SNOL> Unknown command! Does not match any valid command of the language. COMMAND PLEASEEEE
+					cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
 					return false;
 				}
 				temp.erase();
@@ -239,22 +239,22 @@ bool check_syntax(string command, int type)
 
 		if (parenthesis != 0)
 		{
-			// DISPLAY APPROPRIATE ERROR COMMAND PLEASEEEE
-			cout << "ERROR" << endl;
+			// DISPLAY APPROPRIATE SNOL> Unknown command! Does not match any valid command of the language. COMMAND PLEASEEEE
+			cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
 			return false;
 		}
 
 		// Same as above, but for the last part before end of string
 		if (temp.size() == 0)
 		{ // No valid characters for part
-			// DISPLAY APPROPRIATE ERROR COMMAND PLEASEEEE
-			cout << "ERROR" << endl;
+			// DISPLAY APPROPRIATE SNOL> Unknown command! Does not match any valid command of the language. COMMAND PLEASEEEE
+			cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
 			return false;
 		}
 		if (!(regex_match(temp, var) || regex_match(temp, digit)))
 		{ // Not in variable or digit syntax
-			// DISPLAY APPROPRIATE ERROR COMMAND PLEASEEEE
-			cout << "ERROR" << endl;
+			// DISPLAY APPROPRIATE SNOL> Unknown command! Does not match any valid command of the language. COMMAND PLEASEEEE
+			cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
 			return false;
 		}
 		temp.erase();
@@ -278,4 +278,16 @@ int precedence(char c)
     default:
         return 0;
     }
+}
+
+string strip_spaces(string str) {
+    string result = str;
+    size_t start = result.find_first_not_of(" \t");
+    size_t end = result.find_last_not_of(" \t");
+    if (start != string::npos && end != string::npos) {
+        result = result.substr(start, end - start + 1);
+    } else {
+        result = "";
+    }
+    return result;
 }

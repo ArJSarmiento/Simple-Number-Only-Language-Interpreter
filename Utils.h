@@ -22,3 +22,4 @@ bool is_variable(string c);
 bool is_digit(string c);
 bool is_digit(string c);
 int precedence(char c);
+string strip_spaces(string str);
