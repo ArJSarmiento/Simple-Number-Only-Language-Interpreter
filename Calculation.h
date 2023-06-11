@@ -8,6 +8,7 @@
 #include <stack>
 #include <sstream> // Required for converting string to float
 #include <cmath>   // Required for handling float comparison
+#include <vector>
 #include "Utils.h"
 #include "Storage.h"
 #include "Calculation.h"
@@ -16,10 +17,13 @@ using namespace std;
 
 class Calculation
 {
-    public:
+    private:
+        Storage *storage;
         bool isFloat = false;
+    public:
+        Calculation(Storage *storage) : storage(storage) {}
+
+        string remove_trailing_zeroes(float num);
         vector<string> convert_infix_to_postfix(string infix);
         string evaluate_postfix(vector<string> postfix);
-        int precedence(string c);
-        string removeTrailingZeroes(float num);
 };

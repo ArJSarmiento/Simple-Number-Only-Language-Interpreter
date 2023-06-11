@@ -36,28 +36,19 @@ bool is_operator_string(string c)
 	char s = c[0];
 	switch (s)
 	{
-		case '+':
-		case '-':
-		case '*':
-		case '/':
-			return true;
+	case '+':
+	case '-':
+	case '*':
+	case '/':
+		return true;
 	}
 	return false;
 }
-
 
 bool is_variable(string c)
 {												 // Check if the string is in variable name syntax
 	regex var("\\(*-?[A-Za-z][A-Za-z0-9]*\\)*"); // letter{letter|digit} -> in IBNF
 	if (regex_match(c, var))
-		return true;
-	else
-		return false;
-}
-
-bool is_alpha_numeric(char c)
-{ // Check if the character is alphanumeric
-	if (isalpha(c) || isdigit(c))
 		return true;
 	else
 		return false;
@@ -271,4 +262,20 @@ bool check_syntax(string command, int type)
 	}
 	else
 		return false;
+}
+
+int precedence(char c)
+{
+    switch (c)
+    {
+    case '*':
+    case '/':
+    case '%':
+        return 2;
+    case '+':
+    case '-':
+        return 1;
+    default:
+        return 0;
+    }
 }

@@ -7,11 +7,40 @@
 #include <stack>
 #include <sstream> // Required for converting string to float
 #include <cmath>   // Required for handling float comparison
+#include <vector>
 #include "Utils.h"
-#include "Storage.h"
 #include "Calculation.h"
 
 using namespace std;
+
+// Removes all trailing zeroes on a float
+string Calculation::remove_trailing_zeroes(float num)
+{
+    string str = to_string(num);
+    string whole_number = str.substr(0, str.find("."));
+    string decimals = str.substr(str.find(".") + 1);
+    string decimal_results = decimals;
+
+    // iterates backwards and check for trailing zero
+    for (int i = decimals.length() - 1; i >= 0; i--)
+    {
+        if (decimals[i] == '0')
+        {
+            decimal_results.pop_back();
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    // if the decimal results is empty, return the whole number
+    if (decimal_results.empty())
+    {
+        return whole_number;
+    }
+    return whole_number + "." + decimal_results;
+}
 
 /*
     This function converts an infix expression to its equivalent postfix expression and evaluates the postfix if valid
@@ -43,7 +72,13 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
     // Iterate through each character in the infix expression
     for (int i = 0; i < infixStringLength; i++)
     {
-        if (infix[i] == '.')
+        char current_char = infix[i];
+
+        if (isspace(current_char))
+        {
+            continue;
+        }
+        if (current_char == '.')
         {
             if (parsingVariable)
             {
@@ -61,25 +96,25 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
                 return {};
             }
 
-            currentNumber += infix[i];
+            currentNumber += current_char;
             hasDot = true;
         }
-        else if (isdigit(infix[i]) && !parsingVariable)
+        else if (isdigit(current_char) && !parsingVariable)
         {
             // If the character is a digit, append it to the currentNumber string
-            currentNumber += infix[i];
+            currentNumber += current_char;
             parsingNumber = true;
         }
-        else if (is_alpha_numeric(infix[i]))
+        else if (isalnum(current_char))
         {
-            if ((isalpha(infix[i]) && parsingNumber) || hasDot)
+            if ((isalpha(current_char) && parsingNumber) || hasDot)
             {
                 cout << "SNOL> Error! Variables should not start with a number." << endl;
                 return {};
             }
 
             // If the character is a variable, append it to the currentVariable string
-            currentVariable += infix[i];
+            currentVariable += current_char;
             parsingVariable = true;
         }
         else
@@ -87,11 +122,16 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
             if (parsingVariable)
             {
                 // If parsing a variable, add the currentVariable as a token
+                if (currentVariable.find("BEG") != string::npos || currentVariable.find("PRINT") != string::npos)
+                {
+                    cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
+                    return {};
+                }
                 tokens.push_back(currentVariable);
                 currentVariable.clear();
                 parsingVariable = false;
             }
-            if (parsingNumber)
+            else if (parsingNumber)
             {
                 if (currentNumber.back() == '.')
                 {
@@ -116,7 +156,7 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
                 hasDot = false;
             }
 
-            if (is_operator(infix[i]))
+            if (is_operator(current_char))
             {
                 if (is_operator(infix[i + 1]) || infix[i + 1] == '\0')
                 {
@@ -125,15 +165,15 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
                 }
 
                 // If the character is an operator (+, -, *, /)
-                while (!operators.empty() && operators.top() != '(' && operators.top() != ')')
+                while (!operators.empty() && operators.top() != '(' && precedence(operators.top()) >= precedence(current_char))
                 {
                     // Pop operators from the stack and add them as tokens until the top of the stack is '(' or ')'
                     tokens.push_back(string(1, operators.top()));
                     operators.pop();
                 }
-                operators.push(infix[i]); // Push the current operator onto the stack
+                operators.push(current_char); // Push the current operator onto the stack
             }
-            else if (infix[i] == '(')
+            else if (current_char == '(')
             {
                 if (is_operator(infix[i + 1]))
                 {
@@ -141,9 +181,9 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
                     return {};
                 }
 
-                operators.push(infix[i]); // Push '(' onto the stack
+                operators.push(current_char); // Push '(' onto the stack
             }
-            else if (infix[i] == ')')
+            else if (current_char == ')')
             {
                 if (!is_operator(infix[i + 1]) && infix[i + 1] != '\0')
                 {
@@ -163,6 +203,8 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
                     cout << "SNOL> Error! Mismatched parentheses in infix expression" << endl;
                     return {};
                 }
+
+                operators.pop(); // Pop '(' from the stack
             }
             else
             {
@@ -176,7 +218,37 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
     if (parsingNumber)
     {
         // If parsing a number at the end, add it as a token
+        if (currentNumber.back() == '.')
+        {
+            cout << "SNOL> Error! Number has a dot at the end." << endl;
+            return {};
+        }
+        if (hasDot != isFloat)
+        {
+            cout << "SNOL> Error! Operands must be of the same type in an arithmetic operation!" << endl;
+            return {};
+        }
+
+        // If parsing a number, add the currentNumber as a token
         tokens.push_back(currentNumber);
+        currentNumber.clear();
+        parsingNumber = false;
+
+        if (hasDot && !isFloat)
+        {
+            isFloat = true;
+        }
+        hasDot = false;
+    }
+    if (parsingVariable)
+    {
+        // If parsing a variable at the end, add it as a token
+        if (currentVariable.find("BEG"  ) != string::npos || currentVariable.find("PRINT") != string::npos)
+        {
+            cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
+            return {};
+        }
+        tokens.push_back(currentVariable);
     }
 
     while (!operators.empty())
@@ -186,8 +258,10 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
             cout << "SNOL> Error! Mismatched parentheses in infix expression" << endl;
             return {};
         }
+
         // Pop remaining operators from the stack and add them as tokens
-        tokens.push_back(string(1, operators.top()));
+        string o = string(1, operators.top());
+        tokens.push_back(o);
         operators.pop();
     }
 
@@ -202,11 +276,11 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
 string Calculation::evaluate_postfix(vector<string> postfix)
 {
     stack<float> operands; // Stack to store operands
-    Storage storage;
+    bool is_var_value_float = false;
 
-    for (int i = 0; i < postfix.size(); i++)
+    for (string token : postfix)
     {
-        string token = postfix[i];
+
         if (is_digit(token))
         {
             float floatOperand = stof(token);
@@ -214,14 +288,22 @@ string Calculation::evaluate_postfix(vector<string> postfix)
         }
         else if (is_variable(token))
         {
-            if (!storage.var_exists(token))
+            string var_value = storage->get_var(token);
+
+            if (var_value == "")
             {
-                cerr << "SNOL> Error! [" << token << "] is not defined!" << endl;
+                cout << "SNOL> Error! [" << token << "] is not defined!" << endl;
                 return "";
             }
-            string var1 = storage.get_var(token);
 
-            float floatOperand = stof(var1);
+            is_var_value_float = var_value.find('.') != string::npos;
+            if (is_var_value_float != isFloat)
+            {
+                cout << "SNOL> Error! Operands must be of the same type in an arithmetic operation!" << endl;
+                return "";
+            }
+
+            float floatOperand = stof(var_value);
             operands.push(floatOperand);
         }
         else if (is_operator_string(token))
@@ -245,8 +327,15 @@ string Calculation::evaluate_postfix(vector<string> postfix)
                 result = floatOperand1 * floatOperand2;
                 break;
             case '/':
+            {
+                if (floatOperand1 == 0)
+                {
+                    cout << "SNOL> Error! Division by zero!" << endl;
+                    return "";
+                }
                 result = floatOperand2 / floatOperand1;
                 break;
+            }
             }
 
             operands.push(result);
@@ -258,36 +347,5 @@ string Calculation::evaluate_postfix(vector<string> postfix)
         return "";
     }
 
-    return removeTrailingZeroes(operands.top());
-}
-
-string Calculation::removeTrailingZeroes(float num)
-{
-    string str = to_string(num);
-    string whole_number = str.substr(0, str.find("."));
-    string decimals = str.substr(str.find(".") + 1);
-    string decimal_results = decimals;
-
-    // iterates backwards and check for trailing zero
-    for (int i = decimals.length() - 1; i >= 0; i--)
-    {
-        if (decimals[i] == '0')
-        {
-            decimal_results.pop_back();
-        }
-        else
-        {
-            break;
-        }
-    }
-
-    // if the decimal results is empty, return the whole number
-    if (decimal_results.empty())
-    {
-        return whole_number;
-    }
-    else
-    {
-        return whole_number + "." + decimal_results;
-    }
+    return remove_trailing_zeroes(operands.top());
 }

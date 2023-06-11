@@ -3,6 +3,7 @@
 #include "Utils.h"
 #include "Usecase.h"
 #include "Calculation.h"
+#include "Storage.h"
 
 using namespace std;
 
@@ -26,9 +27,12 @@ using namespace std;
 
 int main()
 {
-	string command;	  // command stores the user input
-	int type = 0;	  // type stores the command type of the input
-	Usecase use_case; // Object that performs variable
+	Storage storage;				   // Object that stores variables
+	Calculation calc(&storage);		   // object that performs calculations
+	Usecase use_case(&storage, &calc); // Object that performs variable manipulation
+
+	string command; // command stores the user input
+	int type = 0;	// type stores the command type of the input
 	cout << "The SNOL environment is now active, you may proceed with giving your commands." << endl;
 	while (1)
 	{
@@ -60,11 +64,14 @@ int main()
 		case 4:
 			if (!check_syntax(command, type))
 				cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
+			use_case.CALCULATE(command);
 			break;
 		case 5:
 			// Assignment
 			if (check_syntax(command, type))
 				use_case.ASSIGN(command);
+			else
+				cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
 			break;
 		}
 	}

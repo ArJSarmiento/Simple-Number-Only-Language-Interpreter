@@ -6,11 +6,15 @@
 
 class Usecase
 {
-	Storage storage;
-	Calculation calculation;
+	private:
+		Storage *storage;
+		Calculation *calculation;
 
-public:
-	void BEG(string command);
-	void PRINT(string command);
-	void ASSIGN(string command);
+	public:
+		Usecase(Storage *storage, Calculation *calculation) : storage(storage), calculation(calculation) {}
+
+		void BEG(string command);
+		void PRINT(string command);
+		void ASSIGN(string command);
+		string CALCULATE(string command);
 };

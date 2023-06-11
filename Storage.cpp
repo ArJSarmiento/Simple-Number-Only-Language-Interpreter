@@ -1,23 +1,12 @@
 #include <string>
 #include <unordered_map>
-#include <limits>
-#include "Utils.h"
 #include "Storage.h"
 
 using namespace std;
 
 bool Storage::var_exists(string var_name)
 {
-	try
-	{
-		variables.at(var_name);
-	}
-	catch (const std::exception &e)
-	{
-		return false;
-	}
-
-	return true;
+	return variables.count(var_name) > 0;
 }
 
 void Storage::store_var(string var_name, string expression)
@@ -27,5 +16,9 @@ void Storage::store_var(string var_name, string expression)
 
 string Storage::get_var(string var_name)
 {
-	return variables.at(var_name);
+	if (var_exists(var_name))
+	{
+		return variables[var_name];
+	}
+	return "";
 }
