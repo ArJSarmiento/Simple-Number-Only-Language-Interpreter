@@ -1,11 +1,11 @@
 #include <iostream>
-#include <stack>
 #include <string>
 #include <algorithm>
 #include <cctype>
 #include <cstring>
 #include "Utils.h"
 #include "Calculation.h"
+#include <stack>
 #include <sstream> // Required for converting string to float
 #include <cmath>   // Required for handling float comparison
 
@@ -197,39 +197,38 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
     Input: postfix expression
     Output: result of the expression
 */
-int Calculation::evaluate_postfix(string postfix)
+vector<string> Calculation::evaluate_postfix(string postfix)
 {
-    stack<int> intOperands;
-    stack<float> floatOperands;
-
-    for (char c : postfix)
-    {
-        if (isdigit(c))
+    vector<int> intOperands; // Temporary vector to allow int calculations
+    vector<float> floatOperands; // Temporary vector to allow float calculations
+    vector<string> finalResult; // Final return vector for evaluation
+    
+    for (char c : postfix) {
+        if (isdigit(c)) // Checks if digit
         {
-            // Convert char digit to integer or float and push onto respective stacks
-            if (isFloat)
+            if (isFloat) // Checks if float
             {
                 float floatOperand;
                 stringstream ss;
                 ss << c;
                 ss >> floatOperand;
-                floatOperands.push(floatOperand);
-            }
-            else
+                floatOperands.push_back(floatOperand);
+            } 
+            else // Else integer
             {
                 int intOperand = c - '0';
-                intOperands.push(intOperand);
+                intOperands.push_back(intOperand);
             }
-        }
-        else if (c == '+' || c == '-' || c == '*' || c == '/')
+        } 
+
+        else if (c == '+' || c == '-' || c == '*' || c == '/') // Checks if operator
         {
-            // Perform arithmetic operation when an operator is encountered
-            if (isFloat)
+            if (isFloat) // Checks if float
             {
-                float floatOperand2 = floatOperands.top();
-                floatOperands.pop();
-                float floatOperand1 = floatOperands.top();
-                floatOperands.pop();
+                float floatOperand2 = floatOperands.front();
+                floatOperands.erase(floatOperands.begin());
+                float floatOperand1 = floatOperands.front();
+                floatOperands.erase(floatOperands.begin());
 
                 float result;
                 switch (c)
@@ -248,15 +247,14 @@ int Calculation::evaluate_postfix(string postfix)
                     break;
                 }
 
-                floatOperands.push(result); // Push the result back to the stack
+                floatOperands.push_back(result); // Push the result back to the stack
             }
             else
             {
-                int intOperand2 = intOperands.top();
-                intOperands.pop();
-                int intOperand1 = intOperands.top();
-                intOperands.pop();
-
+                int intOperand2 = intOperands.front();
+                intOperands.erase(intOperands.begin());
+                int intOperand1 = intOperands.front();
+                intOperands.erase(intOperands.begin());
                 int result;
                 switch (c)
                 {
@@ -273,19 +271,22 @@ int Calculation::evaluate_postfix(string postfix)
                     result = intOperand1 / intOperand2;
                     break;
                 }
-
-                intOperands.push(result); // Push the result back to the stack
+                intOperands.push_back(result); // Push the result back to the vector
             }
         }
     }
-
-    if (isFloat && !floatOperands.empty())
+    
+    if (!intOperands.empty())
     {
-        return floatOperands.top(); // Return the final float result
-    }
-    else if (!intOperands.empty())
-    {
-        return intOperands.top(); // Return the final int result
+        
+        for (int i=0; i<intOperands.size(); i++) {
+                stringstream ss;
+                string placeholder;
+                ss << intOperands[i];
+                ss >> placeholder;
+                finalResult.push_back(placeholder); 
+        }
+        return finalResult; // Return the final result as a string
     }
     else
     {
@@ -295,12 +296,7 @@ int Calculation::evaluate_postfix(string postfix)
     }
 }
 
-/*
-    This function returns the precedence of an operator
-    Input: char
-    Output: int
-*/
-int Calculation::precedence(string c)
+int Calculation::precedence(string c) 
 {
     switch (c[0])
     {
@@ -315,3 +311,106 @@ int Calculation::precedence(string c)
         return 0;
     }
 }
+
+
+    // stack<int> intOperands;
+    // stack<float> floatOperands;
+
+    // for (char c : postfix)
+    // {
+    //     if (isdigit(c))
+    //     {
+    //         // Convert char digit to integer or float and push onto respective stacks
+    //         if (isFloat)
+    //         {
+    //             float floatOperand;
+    //             stringstream ss;
+    //             ss << c;
+    //             ss >> floatOperand;
+    //             floatOperands.push_back(floatOperand);
+    //             cout << floatOperand.begin();
+    //         }
+    //         else
+    //         {
+    //             int intOperand = c - '0';
+    //             intOperands.push_back(intOperand);
+    //         }
+    //     }
+    //     else if (c == '+' || c == '-' || c == '*' || c == '/')
+    //     {
+    //         // Perform arithmetic operation when an operator is encountered
+    //         if (isFloat)
+    //         {
+    //             float floatOperand2 = floatOperands.top();
+    //             floatOperands.pop();
+    //             float floatOperand1 = floatOperands.top();
+    //             floatOperands.pop();
+
+    //             float result;
+    //             switch (c)
+    //             {
+    //             case '+':
+    //                 result = floatOperand1 + floatOperand2;
+    //                 break;
+    //             case '-':
+    //                 result = floatOperand1 - floatOperand2;
+    //                 break;
+    //             case '*':
+    //                 result = floatOperand1 * floatOperand2;
+    //                 break;
+    //             case '/':
+    //                 result = floatOperand1 / floatOperand2;
+    //                 break;
+    //             }
+
+    //             floatOperands.push(result); // Push the result back to the stack
+    //         }
+    //         else
+    //         {
+    //             int intOperand2 = intOperands.top();
+    //             intOperands.pop();
+    //             int intOperand1 = intOperands.top();
+    //             intOperands.pop();
+
+    //             int result;
+    //             switch (c)
+    //             {
+    //             case '+':
+    //                 result = intOperand1 + intOperand2;
+    //                 break;
+    //             case '-':
+    //                 result = intOperand1 - intOperand2;
+    //                 break;
+    //             case '*':
+    //                 result = intOperand1 * intOperand2;
+    //                 break;
+    //             case '/':
+    //                 result = intOperand1 / intOperand2;
+    //                 break;
+    //             }
+
+    //             intOperands.push(result); // Push the result back to the stack
+    //         }
+    //     }
+    // }
+
+    // if (isFloat && !floatOperands.empty())
+    // {
+    //     return floatOperands.top(); // Return the final float result
+    // }
+    // else if (!intOperands.empty())
+    // {
+    //     return intOperands.top(); // Return the final int result
+    // }
+    // else
+    // {
+    //     // Handle error when no result is available
+    //     // For example, when the postfix expression is invalid
+    //     throw runtime_error("Invalid postfix expression");
+    // }
+
+/*
+    This function returns the precedence of an operator
+    Input: char
+    Output: int
+*/
