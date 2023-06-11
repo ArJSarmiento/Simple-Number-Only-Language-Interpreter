@@ -71,8 +71,6 @@ int main()
 			// Assignment
 			if (check_syntax(command, type))
 				use_case.ASSIGN(command);
-			else
-				cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
 			break;
 		}
 	}
