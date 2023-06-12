@@ -202,6 +202,7 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
             cout << "SNOL> Error! Number has a dot at the end." << endl;
             return {};
         }
+        //the "fix"
         if (hasDot && !isFloat)
         {
             isFloat = true;
