@@ -54,6 +54,8 @@ void Usecase::ASSIGN(string command)
     // get expression an convert to postfix
     string expression = remove_space(command.substr(command.find("=") + 1));
     string result = CALCULATE(expression);
+    if (result == "")
+        return;
 
     storage->store_var(var_name, result);
 }

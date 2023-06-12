@@ -64,7 +64,8 @@ int main()
 		case 4:
 			if (check_syntax(command, type))
 			{
-				use_case.CALCULATE(command);
+				string normalized = remove_space(command);
+				use_case.CALCULATE(normalized);
 			}
 			break;
 		case 5:
