@@ -27,4 +27,5 @@ class Calculation
         string remove_trailing_zeroes(float num);
         vector<string> convert_infix_to_postfix(string infix);
         string evaluate_postfix(vector<string> postfix);
+        void error_reset(string message);
 };
