@@ -47,6 +47,7 @@ string Calculation::remove_trailing_zeroes(float num)
     Input: infix expression
     Output: postfix expression
 */
+
 vector<string> Calculation::convert_infix_to_postfix(string infix)
 {
     int infixStringLength = infix.length();
@@ -252,6 +253,7 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
     Input: postfix expression
     Output: result of the expression
 */
+
 string Calculation::evaluate_postfix(vector<string> postfix)
 {
     stack<float> operands; // Stack to store operands
