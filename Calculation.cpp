@@ -73,7 +73,7 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
     for (int i = 0; i < infixStringLength; i++)
     {
         char current_char = infix[i];
-
+        // cout << current_char;
         if (current_char == '.')
         {
             if (parsingVariable)
@@ -202,8 +202,13 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
             cout << "SNOL> Error! Number has a dot at the end." << endl;
             return {};
         }
+        if (hasDot && !isFloat)
+        {
+            isFloat = true;
+        }
         if (hasDot != isFloat)
         {
+            cout << hasDot << isFloat;
             cout << "SNOL> Error! Operands must be of the same type in an arithmetic operation!" << endl;
             return {};
         }
