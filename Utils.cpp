@@ -250,28 +250,32 @@ bool check_syntax(string command, int type)
 
 int precedence(char c)
 {
-    switch (c)
-    {
-    case '*':
-    case '/':
-    case '%':
-        return 2;
-    case '+':
-    case '-':
-        return 1;
-    default:
-        return 0;
-    }
+	switch (c)
+	{
+	case '*':
+	case '/':
+	case '%':
+		return 2;
+	case '+':
+	case '-':
+		return 1;
+	default:
+		return 0;
+	}
 }
 
-string strip_spaces(string str) {
-    string result = str;
-    size_t start = result.find_first_not_of(" \t");
-    size_t end = result.find_last_not_of(" \t");
-    if (start != string::npos && end != string::npos) {
-        result = result.substr(start, end - start + 1);
-    } else {
-        result = "";
-    }
-    return result;
+string strip_spaces(string str)
+{
+	string result = str;
+	size_t start = result.find_first_not_of(" \t");
+	size_t end = result.find_last_not_of(" \t");
+	if (start != string::npos && end != string::npos)
+	{
+		result = result.substr(start, end - start + 1);
+	}
+	else
+	{
+		result = "";
+	}
+	return result;
 }
