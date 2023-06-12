@@ -220,7 +220,7 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
             isFloat = false;
             return {};
         }
-        if (hasDot != isFloat)
+        if (hasDot != isFloat && !isFirstToken)
         {
             cout << "SNOL> Error! Operands must be of the same type in an arithmetic operation!" << endl;
             isFloat = false;
