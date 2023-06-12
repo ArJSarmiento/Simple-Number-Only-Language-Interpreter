@@ -20,6 +20,7 @@ class Calculation
     private:
         Storage *storage;
         bool isFloat = false;
+        bool isAllVars = true;
     public:
         Calculation(Storage *storage) : storage(storage) {}
 

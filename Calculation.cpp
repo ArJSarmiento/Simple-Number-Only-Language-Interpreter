@@ -63,12 +63,14 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
     {
         cout << "SNOL> Error! Expression is empty." << endl;
         isFloat = false;
+        isAllVars = true;
         return {};
     }
     if (is_operator(infix[0]))
     {
         cout << "SNOL> Error! Expression cannot start with an operator." << endl;
         isFloat = false;
+        isAllVars = true;
         return {};
     }
 
@@ -83,29 +85,34 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
             {
                 cout << "SNOL> Error! Dot should not be in a variable." << endl;
                 isFloat = false;
+                isAllVars = true;
                 return {};
             }
             if (!parsingNumber)
             {
                 cout << "SNOL> Error! Variables should not start with a dot." << endl;
                 isFloat = false;
+                isAllVars = true;
                 return {};
             }
             if (hasDot)
             {
                 cout << "SNOL> Error! Number has more than one dot." << endl;
                 isFloat = false;
+                isAllVars = true;
                 return {};
             }
 
             currentNumber += current_char;
             hasDot = true;
+            isAllVars = false;
         }
         else if (isdigit(current_char) && !parsingVariable)
         {
             // If the character is a digit, append it to the currentNumber string
             currentNumber += current_char;
             parsingNumber = true;
+            isAllVars = false;
         }
         else if (isalnum(current_char))
         {
@@ -113,6 +120,7 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
             {
                 cout << "SNOL> Error! Variables should not start with a number." << endl;
                 isFloat = false;
+                isAllVars = true;
                 return {};
             }
 
@@ -129,6 +137,7 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
                 {
                     cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
                     isFloat = false;
+                    isAllVars = true;
                     return {};
                 }
                 tokens.push_back(currentVariable);
@@ -141,6 +150,7 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
                 {
                     cout << "SNOL> Error! Number has a dot at the end." << endl;
                     isFloat = false;
+                    isAllVars = true;
                     return {};
                 }
 
@@ -152,6 +162,7 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
                 {
                     cout << "SNOL> Error! Operands must be of the same type in an arithmetic operation!" << endl;
                     isFloat = false;
+                    isAllVars = true;
                     return {};
                 }
                 if (hasDot && !isFloat)
@@ -166,6 +177,10 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
 
             if (is_operator(current_char))
             {
+                // handle negative
+                if (current_char == '-')
+                {
+                }
                 // If the character is an operator (+, -, *, /)
                 while (!operators.empty() && operators.top() != '(' && precedence(operators.top()) >= precedence(current_char))
                 {
@@ -193,6 +208,7 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
                 {
                     cout << "SNOL> Error! Mismatched parentheses in infix expression" << endl;
                     isFloat = false;
+                    isAllVars = true;
                     return {};
                 }
 
@@ -203,6 +219,7 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
                 // Invalid character detected, return "Error!"
                 cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
                 isFloat = false;
+                isAllVars = true;
                 return {};
             }
         }
@@ -217,12 +234,14 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
         {
             cout << "SNOL> Error! Number has a dot at the end." << endl;
             isFloat = false;
+            isAllVars = true;
             return {};
         }
         if (hasDot != isFloat && !isFirstToken)
         {
             cout << "SNOL> Error! Operands must be of the same type in an arithmetic operation!" << endl;
             isFloat = false;
+            isAllVars = true;
             return {};
         }
 
@@ -244,6 +263,7 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
         {
             cout << "SNOL> Unknown command! Does not match any valid command of the language." << endl;
             isFloat = false;
+            isAllVars = true;
             return {};
         }
         tokens.push_back(currentVariable);
@@ -255,6 +275,7 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
         {
             cout << "SNOL> Error! Mismatched parentheses in infix expression" << endl;
             isFloat = false;
+            isAllVars = true;
             return {};
         }
 
@@ -277,8 +298,9 @@ string Calculation::evaluate_postfix(vector<string> postfix)
     stack<float> operands; // Stack to store operands
     bool is_var_value_float = false;
 
-    for (string token : postfix)
+    for (int i = 0; i < postfix.size(); i++)
     {
+        string token = postfix[i];
 
         if (is_digit(token))
         {
@@ -293,19 +315,26 @@ string Calculation::evaluate_postfix(vector<string> postfix)
             {
                 cout << "SNOL> Error! [" << token << "] is not defined!" << endl;
                 isFloat = false;
+                isAllVars = true;
                 return "";
             }
 
             is_var_value_float = var_value.find('.') != string::npos;
-            if (is_var_value_float != isFloat)
+            if ((is_var_value_float != isFloat && !isAllVars) || (isAllVars && i != 0 && is_var_value_float != isFloat))
             {
                 cout << "SNOL> Error! Operands must be of the same type in an arithmetic operation!" << endl;
                 isFloat = false;
+                isAllVars = true;
                 return "";
             }
 
             float floatOperand = stof(var_value);
             operands.push(floatOperand);
+
+            if (is_var_value_float && !isFloat)
+            {
+                isFloat = true;
+            }
         }
         else if (is_operator_string(token))
         {
@@ -333,6 +362,7 @@ string Calculation::evaluate_postfix(vector<string> postfix)
                 {
                     cout << "SNOL> Error! Division by zero!" << endl;
                     isFloat = false;
+                    isAllVars = true;
                     return "";
                 }
                 result = floatOperand2 / floatOperand1;
@@ -347,9 +377,11 @@ string Calculation::evaluate_postfix(vector<string> postfix)
     if (operands.empty())
     {
         isFloat = false;
+        isAllVars = true;
         return "";
     }
 
     isFloat = false;
+    isAllVars = true;
     return remove_trailing_zeroes(operands.top());
 }
