@@ -161,6 +161,7 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
 
                 hasDot = false;
                 parsingNumber = false;
+                isFirstToken = false;
             }
 
             if (is_operator(current_char))
@@ -204,8 +205,6 @@ vector<string> Calculation::convert_infix_to_postfix(string infix)
                 isFloat = false;
                 return {};
             }
-
-            isFirstToken = false;
         }
     }
 
